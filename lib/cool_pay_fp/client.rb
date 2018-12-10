@@ -38,6 +38,7 @@ module Coolpay
 
       response = call_api url_extension: '/payments', request: 'post', body: body
       response.code == 201 ? JSON.parse(response.body)['payment'] : "Something is up! Check this response code: #{response.code}"
+
     end
 
     def list_payments
