@@ -11,8 +11,7 @@ module Coolpay
 
 
     def create_recipient(name:)
-      body = {"recipient": {"name": name}}
-      response = call_api  url_extension: '/recipients', request: 'post', body: body
+      response = call_api  url_extension: '/recipients', request: 'post', body: {"recipient": {"name": name}}
       response.code == 201 ? JSON.parse(response.body)['recipient'] : "Something is up! Check this response code: #{response.code}"
     end
 
@@ -37,17 +36,39 @@ module Coolpay
               }
 
       response = call_api url_extension: '/payments', request: 'post', body: body
-      response.code == 201 ? JSON.parse(response.body)['payment'] : "Something is up! Check this response code: #{response.code}"
+      if response.code == 201
+        payment_info = JSON.parse(response.body)['payment']
+        Payment.new(
+          amount: payment_info['amount'],
+          currency: payment_info['currency'],
+          recipient_id: payment_info['recipient_id'],
+          status: payment_info['status'],
+          id: payment_info['id'])
+      else
+        puts "Something is up! Check this response code: #{response.code}"
+      end
 
     end
 
     def list_payments
       response = call_api url_extension: '/payments', request: 'get'
-      response.code == 200 ? JSON.parse(response.body)['payments'] : "Something is up! Check this response code: #{response.code}"
+      if response.code == 200
+       payments = JSON.parse(response.body)['payments']
+       payments.map do |payment_info|
+          Payment.new(
+          amount: payment_info['amount'],
+          currency: payment_info['currency'],
+          recipient_id: payment_info['recipient_id'],
+          status: payment_info['status'],
+          id: payment_info['id'])
+       end
+      else
+        "Something is up! Check this response code: #{response.code}"
+      end
     end
 
     private
-    def call_api(request:, url_extension:, body:nil)
+    def call_api(url_extension:, request:, body:nil)
       headers = {'Content-Type' => 'application/json',
                  'Authorization' => "Bearer #{@token}"}
 
