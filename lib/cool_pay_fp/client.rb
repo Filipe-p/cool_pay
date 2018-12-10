@@ -39,18 +39,14 @@ module Coolpay
                  'Authorization' => "Bearer #{@token}"}
 
       if name.nil?
-        puts '--------------------------------------'
-        puts 'name nil'
         response = HTTParty.get 'https://coolpay.herokuapp.com/api/recipients', headers: headers
-        puts response.code
         puts JSON.parse(response.body)["recipients"].count
       else
-        query = '?name=' + name.gsub(' ', '%20')
-        puts '--------------------------------------'
-        puts "query #{query}"
         response = HTTParty.get 'https://coolpay.herokuapp.com/api/recipients' + query, headers: headers
-        puts response.code
         puts JSON.parse(response.body)["recipients"].count
+
+        #error handling?
+        #adding make recipients objects?
       end
     end
 
