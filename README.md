@@ -22,7 +22,53 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Load the gem either with bundler (not yet available for security reasons)
+  gem 'cool_pay_fp'
+
+Require it into one of your ruby 'cool_pay_fp'
+
+Load it in IRB. This might be the easiest.
+1 - From the lib folder enter irb
+2 - require_relative 'cool_pay_fp'
+3 - login to create a user and then make payments
+
+Login with
+    Coolpay::Client.new(api_url:, user_name:, api_key:)
+example:
+    user =Coolpay::Client.new(
+          api_url: 'https://coolpay.herokuapp.com/api/login',
+          user_name: 'your_username',
+          api_key: '5up3r$ecretKey!')
+
+After iniating a user you can interact with the rest of the API through the instance methods.
+
+Seach for Recipients
+    search_recipients(name:nil)
+example:
+    user.search_recipients(name: 'Chi Wan')
+    or
+    user.search_recipients
+
+
+Create a Recipient
+    create_recipient(name:)
+example:
+    user.create_recipient(name: 'Alfredo')
+
+
+Make a Payment:
+    make_payment(amount:, recipient_id:, currency:'GBP' )
+example:
+    user.make_payment(amount:450, recipient_id:'9f670df0-8d2a-4e57-a90d-6ae6728c30be', currency:'GBP' )
+
+List Payments
+    list_payments()
+example:
+    user.list_payments
+
+
+Test: run the rspec
+    $ rspec spec
 
 ## Development
 

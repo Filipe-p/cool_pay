@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
 
   spec.summary       = %q{CoolPay Api integration gem. }
   spec.description   = %q{This Gem allows you to login, list recipients, add recipients, list all payments, add a payment}
-  spec.homepage      = "NA."
+  spec.homepage      = "https://github.com/Filipe-p/new_exampel"
   spec.license       = "MIT"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'

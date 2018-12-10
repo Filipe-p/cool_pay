@@ -12,7 +12,12 @@ module Coolpay
 
     def create_recipient(name:)
       response = call_api  url_extension: '/recipients', request: 'post', body: {"recipient": {"name": name}}
-      response.code == 201 ? JSON.parse(response.body)['recipient'] : "Something is up! Check this response code: #{response.code}"
+      if response.code == 201
+        recipient_info = JSON.parse(response.body)['recipient']
+        Recipient.new(name: recipient_info['name'], id: recipient_info['id'])
+      else
+        puts "Something is up! Check this response code: #{response.code}"
+      end
     end
 
     def search_recipients(name:nil)
@@ -23,7 +28,14 @@ module Coolpay
         response = response = call_api url_extension: query, request: 'get'
       end
 
-      response.code == 200 ? JSON.parse(response.body)['recipients'] : "Something is up! Check this response code: #{response.code}"
+      if response.code == 200
+        recipients_array = JSON.parse(response.body)['recipients']
+        recipients_array.map do |recipient_info|
+          Recipient.new(name: recipient_info['name'], id: recipient_info['id'])
+        end
+        else
+          puts "Something is up! Check this response code: #{response.code}"
+        end
     end
 
     def make_payment(amount:, recipient_id:, currency:'GBP' )
@@ -63,7 +75,7 @@ module Coolpay
           id: payment_info['id'])
        end
       else
-        "Something is up! Check this response code: #{response.code}"
+        puts "Something is up! Check this response code: #{response.code}"
       end
     end
 
@@ -88,9 +100,11 @@ module Coolpay
       json_body = JSON.generate(body)
 
       response = HTTParty.post 'https://coolpay.herokuapp.com/api/login', body: json_body, headers: headers
-
-      @token = JSON.parse(response.body)["token"]
-      # Error handle?
+      if response.code == 200
+        @token = JSON.parse(response.body)["token"]
+      else
+        puts "Something is up! Check this response code: #{response.code}"
+      end
     end
   end
 end
