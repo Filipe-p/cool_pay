@@ -11,17 +11,7 @@ module Coolpay
     end
 
 
-    def login
-      headers = {'Content-Type' => 'application/json'}
-      body = {username: @user_name, apikey: @api_key}
-      json_body = JSON.generate(body)
 
-
-      response = HTTParty.post 'https://coolpay.herokuapp.com/api/login', body: json_body, headers: headers
-
-      @token = JSON.parse(response.body)["token"]
-      # Error handle?
-    end
 
     def create_recipient(name:)
       headers = {'Content-Type' => 'application/json',
@@ -40,14 +30,47 @@ module Coolpay
 
       if name.nil?
         response = HTTParty.get 'https://coolpay.herokuapp.com/api/recipients', headers: headers
-        puts JSON.parse(response.body)["recipients"].count
+        puts JSON.parse(response.body)["recipients"]
       else
         response = HTTParty.get 'https://coolpay.herokuapp.com/api/recipients' + query, headers: headers
-        puts JSON.parse(response.body)["recipients"].count
+        puts JSON.parse(response.body)["recipients"]
 
         #error handling?
         #adding make recipients objects?
       end
+    end
+
+    def make_payment(amount:, recipient_id:, currency:'GBP' )
+      headers = {'Content-Type' => 'application/json',
+                 'Authorization' => "Bearer #{@token}"}
+      body = {
+                "payment": {
+                  "amount": amount,
+                  "currency": currency,
+                  "recipient_id": recipient_id
+                }
+              }
+      json_body = JSON.generate(body)
+
+      response = HTTParty.post 'https://coolpay.herokuapp.com/api/payments', body: json_body, headers: headers
+      puts response.code
+
+      #Error handle
+      # create a new recipient object?
+
+    end
+    private
+
+    def login
+      headers = {'Content-Type' => 'application/json'}
+      body = {username: @user_name, apikey: @api_key}
+      json_body = JSON.generate(body)
+
+
+      response = HTTParty.post 'https://coolpay.herokuapp.com/api/login', body: json_body, headers: headers
+
+      @token = JSON.parse(response.body)["token"]
+      # Error handle?
     end
 
   end
