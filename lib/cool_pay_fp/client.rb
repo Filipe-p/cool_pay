@@ -11,8 +11,6 @@ module Coolpay
     end
 
 
-
-
     def create_recipient(name:)
       headers = {'Content-Type' => 'application/json',
                  'Authorization' => "Bearer #{@token}"}
@@ -58,6 +56,13 @@ module Coolpay
       #Error handle
       # create a new recipient object?
 
+    end
+
+    def list_payments
+      headers = {'Content-Type' => 'application/json',
+                 'Authorization' => "Bearer #{@token}"}
+      response = HTTParty.get 'https://coolpay.herokuapp.com/api/payments', headers: headers
+      puts response.code
     end
     private
 
