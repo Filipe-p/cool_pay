@@ -18,7 +18,18 @@ module Coolpay
 
 
       response = HTTParty.post 'https://coolpay.herokuapp.com/api/login', body: json_body, headers: headers
+
       @token = JSON.parse(response.body)["token"]
+    end
+
+    def create_recipient(name:)
+      headers = {'Content-Type' => 'application/json',
+                 'Authorization' => "Bearer #{@token}"}
+      body = {"recipient": {"name": name}}
+      json_body = JSON.generate(body)
+      puts @token
+
+      response = HTTParty.post 'https://coolpay.herokuapp.com/api/recipients', body: json_body, headers: headers
     end
 
 
