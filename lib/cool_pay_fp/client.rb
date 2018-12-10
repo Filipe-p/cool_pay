@@ -3,7 +3,7 @@ module Coolpay
   class Client
     attr_accessor :api_url, :user_name, :api_key, :token
 
-    def initialize(api_url, user_name, api_key)
+    def initialize(api_url:, user_name:, api_key:)
       @api_url = api_url
       @user_name = user_name
       @api_key = api_key
@@ -20,5 +20,7 @@ module Coolpay
       response = HTTParty.post 'https://coolpay.herokuapp.com/api/login', body: json_body, headers: headers
       @token = JSON.parse(response.body)["token"]
     end
+
+
   end
 end
